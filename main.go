@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -35,6 +36,7 @@ func (npm *npmWriter) AddChangelog() {
 
 func (npm *npmWriter) WriteToPackage() {
 	var packageMap map[string]interface{}
+	var outFormatted bytes.Buffer
 
 	pwd, _ := os.Getwd()
 	packageData, errReadFile := ioutil.ReadFile(pwd + "/package.json")
@@ -46,7 +48,8 @@ func (npm *npmWriter) WriteToPackage() {
 	packageMap["version"] = string(npm.version)
 
 	packageJSON, _ := json.Marshal(packageMap)
-	errWriteFile := ioutil.WriteFile(pwd+"/package.json", packageJSON, 0644)
+	json.Indent(&outFormatted, packageJSON, "", "\t")
+	errWriteFile := ioutil.WriteFile(pwd+"/package.json", outFormatted.Bytes(), 0644)
 	errorCheck(errWriteFile)
 }
 
