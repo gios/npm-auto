@@ -107,34 +107,6 @@ func (npm *npmWriter) WriteToFiles() {
 	npm.AddChangelog()
 	fmt.Println("-----------------------------")
 	npm.Finish(npm.WriteToPackage(), npm.WriteToReadme(), npm.WriteToChangelog())
-
-	go func() {
-		for {
-			select {
-			case packageStatus := <-loaderPackageChan:
-				if packageStatus {
-					fmt.Println("package.json has been updated!")
-				} else {
-					fmt.Println("package.json not found!")
-				}
-			case readmeStatus := <-loaderReadmeChan:
-				if readmeStatus {
-					fmt.Println("README.md has been updated!")
-				} else {
-					fmt.Println("README.md not found!")
-				}
-			case changelogStatus := <-loaderChangelogChan:
-				if changelogStatus {
-					fmt.Println("CHANGELOG.md has been updated!")
-				} else {
-					fmt.Println("CHANGELOG.md not found!")
-				}
-			case status := <-finishChan:
-
-				return
-			}
-		}
-	}()
 }
 
 func main() {
