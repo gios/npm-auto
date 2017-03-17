@@ -36,7 +36,7 @@ func (npm *npmWriter) AddChangelog() {
 	npm.changelog = string(message)
 }
 
-func (npm *npmWriter) WriteToPackage() {
+func (npm *npmWriter) WriteToPackage() bool {
 	var packageMap map[string]interface{}
 	var outFormatted bytes.Buffer
 
@@ -52,9 +52,11 @@ func (npm *npmWriter) WriteToPackage() {
 	json.Indent(&outFormatted, packageJSON, "", "\t")
 	errWriteFile := ioutil.WriteFile(pwd+"/package.json", outFormatted.Bytes(), 0644)
 	errorCheck(errWriteFile)
+	fmt.Println("package.json has been updated!")
+	return true
 }
 
-func (npm *npmWriter) WriteToReadme() {
+func (npm *npmWriter) WriteToReadme() bool {
 	var newVersionStr string
 
 	pwd, _ := os.Getwd()
@@ -69,9 +71,11 @@ func (npm *npmWriter) WriteToReadme() {
 	outReadme := strings.Replace(string(readmeData), oldVersion, "v"+newVersionStr, 1)
 	errWriteFile := ioutil.WriteFile(pwd+"/README.md", []byte(outReadme), 0644)
 	errorCheck(errWriteFile)
+	fmt.Println("README.md has been updated!")
+	return true
 }
 
-func (npm *npmWriter) WriteToChangelog() {
+func (npm *npmWriter) WriteToChangelog() bool {
 	pwd, _ := os.Getwd()
 	changelogData, errReadFile := ioutil.ReadFile(pwd + "/CHANGELOG.md")
 	errorCheck(errReadFile)
@@ -85,19 +89,56 @@ func (npm *npmWriter) WriteToChangelog() {
 	changelogJoined := strings.Join(changelogSplitted, "\n")
 	errWriteFile := ioutil.WriteFile(pwd+"/CHANGELOG.md", []byte(changelogJoined), 0644)
 	errorCheck(errWriteFile)
+	fmt.Println("CHANGELOG.md has been updated!")
+	return true
+}
+
+func (npm *npmWriter) Finish(loaderPackage, loaderReadme, loaderChangelog bool) {
+	if loaderPackage && loaderReadme && loaderChangelog {
+		fmt.Println("-----------------------------")
+		fmt.Printf("Version successfully updated to: %v\n", npm.version)
+	} else {
+		fmt.Println("Oops something has gone wrong, please try again!")
+	}
 }
 
 func (npm *npmWriter) WriteToFiles() {
 	npm.IncreaseVersion()
 	npm.AddChangelog()
-	npm.WriteToPackage()
-	npm.WriteToReadme()
-	npm.WriteToChangelog()
+	fmt.Println("-----------------------------")
+	npm.Finish(npm.WriteToPackage(), npm.WriteToReadme(), npm.WriteToChangelog())
+
+	go func() {
+		for {
+			select {
+			case packageStatus := <-loaderPackageChan:
+				if packageStatus {
+					fmt.Println("package.json has been updated!")
+				} else {
+					fmt.Println("package.json not found!")
+				}
+			case readmeStatus := <-loaderReadmeChan:
+				if readmeStatus {
+					fmt.Println("README.md has been updated!")
+				} else {
+					fmt.Println("README.md not found!")
+				}
+			case changelogStatus := <-loaderChangelogChan:
+				if changelogStatus {
+					fmt.Println("CHANGELOG.md has been updated!")
+				} else {
+					fmt.Println("CHANGELOG.md not found!")
+				}
+			case status := <-finishChan:
+
+				return
+			}
+		}
+	}()
 }
 
 func main() {
 	npm := npmWriter{}
 	npm.WriteToFiles()
-	fmt.Print("Press 'Enter' to continue...")
 	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
