@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 )
 
 type npmWriter struct {
@@ -52,10 +54,28 @@ func (npm *npmWriter) WriteToPackage() {
 	errorCheck(errWriteFile)
 }
 
+func (npm *npmWriter) WriteToReadme() {
+	var newVersionStr string
+
+	pwd, _ := os.Getwd()
+	readmeData, errReadFile := ioutil.ReadFile(pwd + "/README.md")
+	errorCheck(errReadFile)
+
+	readmeHeader := strings.Split(string(readmeData), "\n")[0]
+	regexpVersion := regexp.MustCompile("(v(\\d+\\.)?(\\d+\\.)?(\\*|\\d+))")
+	oldVersion := regexpVersion.FindString(readmeHeader)
+
+	newVersionStr += npm.version
+	outReadme := strings.Replace(string(readmeData), oldVersion, "v"+newVersionStr, 1)
+	errWriteFile := ioutil.WriteFile(pwd+"/README.md", []byte(outReadme), 0644)
+	errorCheck(errWriteFile)
+}
+
 func (npm *npmWriter) WriteToFiles() {
 	npm.IncreaseVersion()
 	npm.AddChangelog()
 	npm.WriteToPackage()
+	npm.WriteToReadme()
 }
 
 func main() {
