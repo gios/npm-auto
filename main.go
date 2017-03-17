@@ -71,25 +71,28 @@ func (npm *npmWriter) WriteToReadme() {
 	errorCheck(errWriteFile)
 }
 
-// func (npm *npmWriter) WriteToChangelog() {
-// 	pwd, _ := os.Getwd()
-// 	changelogData, errReadFile := ioutil.ReadFile(pwd + "/CHANGELOG.md")
-// 	errorCheck(errReadFile)
+func (npm *npmWriter) WriteToChangelog() {
+	pwd, _ := os.Getwd()
+	changelogData, errReadFile := ioutil.ReadFile(pwd + "/CHANGELOG.md")
+	errorCheck(errReadFile)
 
-// 	changelogSplitted := strings.Split(string(changelogData), "\n")
-// 	aa := make([]string, 10)
-// 	ss := append(changelogSplitted[:1], append(aa, changelogSplitted[1:]))
-// 	for i, v := range changelogSplitted {
-// 		fmt.Println(i, v)
-// 	}
-// }
+	changelogSplitted := strings.Split(string(changelogData), "\n")
+	changelogAdder := make([]string, 4)
+	changelogAdder[1] = "## " + npm.version
+	changelogAdder[3] = "- " + npm.changelog
+
+	changelogSplitted = append(changelogSplitted[:1], append(changelogAdder, changelogSplitted[1:]...)...)
+	changelogJoined := strings.Join(changelogSplitted, "\n")
+	errWriteFile := ioutil.WriteFile(pwd+"/CHANGELOG.md", []byte(changelogJoined), 0644)
+	errorCheck(errWriteFile)
+}
 
 func (npm *npmWriter) WriteToFiles() {
 	npm.IncreaseVersion()
 	npm.AddChangelog()
 	npm.WriteToPackage()
 	npm.WriteToReadme()
-	// npm.WriteToChangelog()
+	npm.WriteToChangelog()
 }
 
 func main() {
