@@ -44,7 +44,6 @@ func (npm *npmWriter) WriteToPackage() {
 
 	errJSONDecode := json.Unmarshal(packageData, &packageMap)
 	errorCheck(errJSONDecode)
-	fmt.Println(npm.version)
 	packageMap["version"] = string(npm.version)
 
 	packageJSON, _ := json.Marshal(packageMap)
@@ -62,6 +61,6 @@ func (npm *npmWriter) WriteToFiles() {
 func main() {
 	npm := npmWriter{}
 	npm.WriteToFiles()
-	// fmt.Print("Press 'Enter' to continue...")
-	// bufio.NewReader(os.Stdin).ReadBytes('\n')
+	fmt.Print("Press 'Enter' to continue...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 }
