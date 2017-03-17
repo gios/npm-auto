@@ -71,11 +71,25 @@ func (npm *npmWriter) WriteToReadme() {
 	errorCheck(errWriteFile)
 }
 
+// func (npm *npmWriter) WriteToChangelog() {
+// 	pwd, _ := os.Getwd()
+// 	changelogData, errReadFile := ioutil.ReadFile(pwd + "/CHANGELOG.md")
+// 	errorCheck(errReadFile)
+
+// 	changelogSplitted := strings.Split(string(changelogData), "\n")
+// 	aa := make([]string, 10)
+// 	ss := append(changelogSplitted[:1], append(aa, changelogSplitted[1:]))
+// 	for i, v := range changelogSplitted {
+// 		fmt.Println(i, v)
+// 	}
+// }
+
 func (npm *npmWriter) WriteToFiles() {
 	npm.IncreaseVersion()
 	npm.AddChangelog()
 	npm.WriteToPackage()
 	npm.WriteToReadme()
+	// npm.WriteToChangelog()
 }
 
 func main() {
