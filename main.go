@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -93,6 +94,14 @@ func (npm *npmWriter) WriteToChangelog() bool {
 	return true
 }
 
+func (npm *npmWriter) addTag() {
+	cmd := exec.Command("git", "tag", "v"+npm.version, "-f")
+	err := cmd.Run()
+	errorCheck(err)
+	fmt.Println("-----------------------------")
+	fmt.Printf("Tag has been added")
+}
+
 func (npm *npmWriter) Finish(loaderPackage, loaderReadme, loaderChangelog bool) {
 	if loaderPackage && loaderReadme && loaderChangelog {
 		fmt.Println("-----------------------------")
@@ -107,6 +116,7 @@ func (npm *npmWriter) WriteToFiles() {
 	npm.AddChangelog()
 	fmt.Println("-----------------------------")
 	npm.Finish(npm.WriteToPackage(), npm.WriteToReadme(), npm.WriteToChangelog())
+	npm.addTag()
 }
 
 func main() {
