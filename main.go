@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const npmVersionRegexp = "(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)"
+
 type npmWriter struct {
 	version   string
 	changelog string
@@ -23,9 +25,15 @@ func errorCheck(e error) {
 
 func (npm *npmWriter) IncreaseVersion() {
 	versionReader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter new version: ")
-	version, _, _ := versionReader.ReadLine()
-	npm.version = string(version)
+	regexpVersion := regexp.MustCompile("^" + npmVersionRegexp + "$")
+	for {
+		fmt.Print("Enter new version: ")
+		version, _, _ := versionReader.ReadLine()
+		if regexpVersion.FindString(string(version)) != "" {
+			npm.version = string(version)
+			return
+		}
+	}
 }
 
 func (npm *npmWriter) AddChangelog() {
@@ -40,7 +48,7 @@ func (npm *npmWriter) WriteToPackage() bool {
 	packageData, errReadFile := ioutil.ReadFile(pwd + "/package.json")
 	errorCheck(errReadFile)
 	splittedPackageData := strings.Split(string(packageData), "\n")
-	regexpVersion := regexp.MustCompile("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)")
+	regexpVersion := regexp.MustCompile(npmVersionRegexp)
 	for i, v := range splittedPackageData {
 		if strings.Contains(v, "version") {
 			oldVersion := regexpVersion.FindString(v)
@@ -63,7 +71,7 @@ func (npm *npmWriter) WriteToReadme() bool {
 	errorCheck(errReadFile)
 
 	readmeHeader := strings.Split(string(readmeData), "\n")[0]
-	regexpVersion := regexp.MustCompile("(v(\\d+\\.)?(\\d+\\.)?(\\*|\\d+))")
+	regexpVersion := regexp.MustCompile("(v" + npmVersionRegexp + ")")
 	oldVersion := regexpVersion.FindString(readmeHeader)
 
 	newVersionStr += npm.version
