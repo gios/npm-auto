@@ -2,8 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -38,20 +36,20 @@ func (npm *npmWriter) AddChangelog() {
 }
 
 func (npm *npmWriter) WriteToPackage() bool {
-	var packageMap map[string]interface{}
-	var outFormatted bytes.Buffer
-
 	pwd, _ := os.Getwd()
 	packageData, errReadFile := ioutil.ReadFile(pwd + "/package.json")
 	errorCheck(errReadFile)
-
-	errJSONDecode := json.Unmarshal(packageData, &packageMap)
-	errorCheck(errJSONDecode)
-	packageMap["version"] = string(npm.version)
-
-	packageJSON, _ := json.Marshal(packageMap)
-	json.Indent(&outFormatted, packageJSON, "", "\t")
-	errWriteFile := ioutil.WriteFile(pwd+"/package.json", outFormatted.Bytes(), 0644)
+	splittedPackageData := strings.Split(string(packageData), "\n")
+	regexpVersion := regexp.MustCompile("(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)")
+	for i, v := range splittedPackageData {
+		if strings.Contains(v, "version") {
+			oldVersion := regexpVersion.FindString(v)
+			fmt.Println(oldVersion)
+			splittedPackageData[i] = strings.Replace(v, oldVersion, npm.version, -1)
+		}
+	}
+	packageDataJoined := strings.Join(splittedPackageData, "\n")
+	errWriteFile := ioutil.WriteFile(pwd+"/package.json", []byte(packageDataJoined), 0644)
 	errorCheck(errWriteFile)
 	fmt.Println("package.json has been updated!")
 	return true
@@ -97,9 +95,12 @@ func (npm *npmWriter) WriteToChangelog() bool {
 func (npm *npmWriter) addTag() {
 	cmd := exec.Command("git", "tag", "v"+npm.version, "-f")
 	err := cmd.Run()
-	errorCheck(err)
-	fmt.Println("-----------------------------")
-	fmt.Printf("Tag has been added")
+	if err != nil {
+		fmt.Println("ERROR: Tags can't be added")
+	} else {
+		fmt.Println("-----------------------------")
+		fmt.Println("Tag has been added")
+	}
 }
 
 func (npm *npmWriter) Finish(loaderPackage, loaderReadme, loaderChangelog bool) {

@@ -1,44 +1,44 @@
 {
-	"author": "",
-	"dependencies": {
-		"@assurance/alerts": "^1.1.1",
-		"@assurance/grid": "^1.1.1",
-		"@assurance/user-management": "^1.1.1",
-		"lodash": "^4.17.4",
-		"ng2-bootstrap": "^1.3.3"
-	},
-	"description": "Assurance Roles",
-	"devDependencies": {
-		"@angular/common": "^2.4.8",
-		"@angular/compiler": "^2.4.8",
-		"@angular/compiler-cli": "^2.4.8",
-		"@angular/core": "^2.4.8",
-		"@angular/forms": "^2.4.8",
-		"@angular/http": "^2.4.8",
-		"@angular/platform-browser": "^2.4.8",
-		"@angular/router": "^3.4.8",
-		"@types/jasmine": "^2.5.41",
-		"@types/lodash": "^4.14.52",
-		"codelyzer": "^2.0.0",
-		"del": "^2.2.2",
-		"gulp": "^3.9.1",
-		"gulp-inline-ng2-template": "^4.0.0",
-		"gulp-tslint": "^7.1.0",
-		"node-sass": "^4.5.0",
-		"protractor": "^5.1.1",
-		"rxjs": "^5.1.0",
-		"tslint": "^4.4.2",
-		"typescript": "^2.1.5",
-		"zone.js": "^0.7.6"
-	},
-	"license": "ISC",
-	"main": "index.js",
-	"name": "@assurance/roles",
-	"publishConfig": {
-		"registry": "http://nexus.assurancedv.com/repository/npm-own/"
-	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" \u0026\u0026 exit 1"
-	},
-	"version": "1.2.3"
+  "name": "@assurance/roles",
+  "version": "1.1.4",
+  "description": "Assurance Roles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "publishConfig": {
+    "registry": "http://nexus.assurancedv.com/repository/npm-own/"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@assurance/alerts": "^1.1.1",
+    "@assurance/grid": "^1.1.1",
+    "@assurance/user-management": "^1.1.1",
+    "lodash": "^4.17.4",
+    "ng2-bootstrap": "^1.3.3"
+  },
+  "devDependencies": {
+    "@angular/common": "^2.4.8",
+    "@angular/compiler": "^2.4.8",
+    "@angular/compiler-cli": "^2.4.8",
+    "@angular/core": "^2.4.8",
+    "@angular/forms": "^2.4.8",
+    "@angular/http": "^2.4.8",
+    "@angular/platform-browser": "^2.4.8",
+    "@angular/router": "^3.4.8",
+    "@types/jasmine": "^2.5.41",
+    "@types/lodash": "^4.14.52",
+    "codelyzer": "^2.0.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-inline-ng2-template": "^4.0.0",
+    "gulp-tslint": "^7.1.0",
+    "node-sass": "^4.5.0",
+    "protractor": "^5.1.1",
+    "rxjs": "^5.1.0",
+    "tslint": "^4.4.2",
+    "typescript": "^2.1.5",
+    "zone.js": "^0.7.6"
+  }
 }
