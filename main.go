@@ -101,21 +101,13 @@ func (npm *npmWriter) WriteToChangelog() bool {
 
 func (npm *npmWriter) addTag() {
 	createTag := exec.Command("git", "tag", "v"+npm.version, "-f")
-	pushTag := exec.Command("git", "push", "origin", "v"+npm.version)
 	createTagErr := createTag.Run()
-	pushTagErr := pushTag.Run()
 
-	fmt.Println("-----------------------------")
 	if createTagErr != nil {
 		fmt.Println("ERROR: Tags can't be added")
 	} else {
+		fmt.Println("-----------------------------")
 		fmt.Println("Tag has been added")
-	}
-
-	if pushTagErr != nil {
-		fmt.Println("ERROR: Tags can't be pushed to origin")
-	} else {
-		fmt.Println("Tag has been pushed to origin")
 	}
 }
 
