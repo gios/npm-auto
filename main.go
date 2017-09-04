@@ -99,18 +99,6 @@ func (npm *npmWriter) WriteToChangelog() bool {
 	return true
 }
 
-func (npm *npmWriter) addTag() {
-	createTag := exec.Command("git", "tag", "v"+npm.version, "-f")
-	createTagErr := createTag.Run()
-
-	if createTagErr != nil {
-		fmt.Println("ERROR: Tags can't be added")
-	} else {
-		fmt.Println("-----------------------------")
-		fmt.Println("Tag has been added")
-	}
-}
-
 func (npm *npmWriter) Finish(loaderPackage, loaderReadme, loaderChangelog bool) {
 	if loaderPackage && loaderReadme && loaderChangelog {
 		fmt.Println("-----------------------------")
@@ -125,7 +113,6 @@ func (npm *npmWriter) WriteToFiles() {
 	npm.AddChangelog()
 	fmt.Println("-----------------------------")
 	npm.Finish(npm.WriteToPackage(), npm.WriteToReadme(), npm.WriteToChangelog())
-	npm.addTag()
 }
 
 func main() {
